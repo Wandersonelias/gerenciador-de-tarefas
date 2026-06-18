@@ -54,14 +54,14 @@ app.post('/tasks', (req, res) => {
     });
   }
 
-  const newTask = {
-    id: randomUUID(),
-    title: title.trim(),
-    description: description ? String(description).trim() : '',
-    status: status || 'pending',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
+//   const newTask = {
+//     id: randomUUID(),
+//     title: title.trim(),
+//     description: description ? String(description).trim() : '',
+//     status: status || 'pending',
+//     createdAt: new Date().toISOString(),
+//     updatedAt: new Date().toISOString()
+//   };
 
   tasks.push(newTask);
   res.status(201).json(newTask);
