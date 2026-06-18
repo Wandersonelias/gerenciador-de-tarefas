@@ -40,7 +40,32 @@ app.get('/tasks', (req, res) => {
   res.json({ count: result.length, tasks: result });
 });
 
+// Criar nova tarefa
+app.post('/tasks', (req, res) => {
+  const { title, description, status } = req.body;
 
+  if (!title || typeof title !== 'string' || !title.trim()) {
+    return res.status(400).json({ error: 'O campo "title" é obrigatório' });
+  }
+
+  if (status && !VALID_STATUSES.includes(status)) {
+    return res.status(400).json({
+      error: `Status inválido. Use um dos seguintes: ${VALID_STATUSES.join(', ')}`
+    });
+  }
+
+  const newTask = {
+    id: randomUUID(),
+    title: title.trim(),
+    description: description ? String(description).trim() : '',
+    status: status || 'pending',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  tasks.push(newTask);
+  res.status(201).json(newTask);
+});
 
 app.listen(3000,()=>{
     console.log("Servidor online!!")
