@@ -40,6 +40,16 @@ app.get('/tasks', (req, res) => {
   res.json({ count: result.length, tasks: result });
 });
 
+// Buscar uma tarefa específica
+app.get('/tasks/:id', (req, res) => {
+  const task = tasks.find(t => t.id === req.params.id);
+  if (!task) {
+    return res.status(404).json({ error: 'Tarefa não encontrada' });
+  }
+  res.json(task);
+});
+
+
 // Criar nova tarefa
 app.post('/tasks', (req, res) => {
   const { title, description, status } = req.body;
@@ -66,6 +76,52 @@ app.post('/tasks', (req, res) => {
   tasks.push(newTask);
   res.status(201).json(newTask);
 });
+
+// Atualizar tarefa existente (título, descrição e/ou status)
+app.put('/tasks/:id', (req, res) => {
+  const task = tasks.find(t => t.id === req.params.id);
+  if (!task) {
+    return res.status(404).json({ error: 'Tarefa não encontrada' });
+  }
+
+  const { title, description, status } = req.body;
+
+  if (title !== undefined) {
+    if (typeof title !== 'string' || !title.trim()) {
+      return res.status(400).json({ error: 'O campo "title" não pode ser vazio' });
+    }
+    task.title = title.trim();
+  }
+
+  if (description !== undefined) {
+    task.description = String(description).trim();
+  }
+
+  if (status !== undefined) {
+    if (!VALID_STATUSES.includes(status)) {
+      return res.status(400).json({
+        error: `Status inválido. Use um dos seguintes: ${VALID_STATUSES.join(', ')}`
+      });
+    }
+    task.status = status;
+  }
+
+  task.updatedAt = new Date().toISOString();
+  res.json(task);
+});
+
+
+// Remover tarefa
+app.delete('/tasks/:id', (req, res) => {
+  const index = tasks.findIndex(t => t.id === req.params.id);
+  if (index === -1) {
+    return res.status(404).json({ error: 'Tarefa não encontrada' });
+  }
+
+  const [removed] = tasks.splice(index, 1);
+  res.json({ message: 'Tarefa removida com sucesso', task: removed });
+});
+
 
 app.listen(3000,()=>{
     console.log("Servidor online!!")
