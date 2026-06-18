@@ -40,6 +40,16 @@ app.get('/tasks', (req, res) => {
   res.json({ count: result.length, tasks: result });
 });
 
+// Buscar uma tarefa específica
+app.get('/tasks/:id', (req, res) => {
+  const task = tasks.find(t => t.id === req.params.id);
+  if (!task) {
+    return res.status(404).json({ error: 'Tarefa não encontrada' });
+  }
+  res.json(task);
+});
+
+
 // Criar nova tarefa
 app.post('/tasks', (req, res) => {
   const { title, description, status } = req.body;
