@@ -101,6 +101,17 @@ app.put('/tasks/:id', (req, res) => {
 });
 
 
+// Remover tarefa
+app.delete('/tasks/:id', (req, res) => {
+  const index = tasks.findIndex(t => t.id === req.params.id);
+  if (index === -1) {
+    return res.status(404).json({ error: 'Tarefa não encontrada' });
+  }
+
+  const [removed] = tasks.splice(index, 1);
+  res.json({ message: 'Tarefa removida com sucesso', task: removed });
+});
+
 
 app.listen(3000,()=>{
     console.log("Servidor online!!")
