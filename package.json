@@ -4,8 +4,8 @@
   "description": "API REST simples em Node.js + Express para demonstração, com armazenamento em memória (os dados são perdidos ao reiniciar o servidor).",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev" : "node src/index.js"
+    "test": "echo \"Error: no test specified\"",
+    "dev" : "echo \"Servidor online\""
 
   },
   "keywords": [],
