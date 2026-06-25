@@ -4,8 +4,15 @@
   "description": "API REST simples em Node.js + Express para demonstração, com armazenamento em memória (os dados são perdidos ao reiniciar o servidor).",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\"",
-    "dev": "echo \"Servidor online\""
+     "test": "jest --forceExit --detectOpenHandles",
+     "dev": "node --watch src/server.js",
+     "start" : "node src/server.js"
+  },
+   "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/__tests__/**/*.test.js"
+    ]
   },
   "keywords": [],
   "author": "",
