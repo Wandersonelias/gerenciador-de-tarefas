@@ -1,10 +1,12 @@
-const express = require('express')
-const { randomUUID } = require('crypto')
-const app = express()
+const express = require('express');
+const { randomUUID } = require('crypto');
 
+const app = express();
 
-// "Banco de dados" em memória
-let tasks = [
+app.use(express.json());
+
+// "Banco de dados" em memória — exportado para resetar entre testes
+const initialTasks = () => [
   {
     id: randomUUID(),
     title: 'Configurar ambiente do projeto',
@@ -23,8 +25,32 @@ let tasks = [
   }
 ];
 
-//Constantes de validação de status
+let tasks = initialTasks();
+
 const VALID_STATUSES = ['pending', 'in_progress', 'done'];
+
+// Middleware de log (silenciado em testes via NODE_ENV)
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV !== 'test') {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  }
+  next();
+});
+
+// Rota raiz com informações básicas da API
+app.get('/', (req, res) => {
+  res.json({
+    message: 'API de Gestão de Tarefas',
+    endpoints: {
+      'GET /tasks': 'Lista todas as tarefas (aceita ?status=pending|in_progress|done)',
+      'GET /tasks/:id': 'Busca uma tarefa pelo id',
+      'POST /tasks': 'Cria uma nova tarefa (title obrigatório, description opcional)',
+      'PUT /tasks/:id': 'Atualiza uma tarefa existente',
+      'PATCH /tasks/:id/status': 'Atualiza apenas o status da tarefa',
+      'DELETE /tasks/:id': 'Remove uma tarefa'
+    }
+  });
+});
 
 // Listar tarefas, com filtro opcional por status
 app.get('/tasks', (req, res) => {
@@ -48,7 +74,6 @@ app.get('/tasks/:id', (req, res) => {
   }
   res.json(task);
 });
-
 
 // Criar nova tarefa
 app.post('/tasks', (req, res) => {
@@ -110,6 +135,24 @@ app.put('/tasks/:id', (req, res) => {
   res.json(task);
 });
 
+// Atualizar apenas o status
+app.patch('/tasks/:id/status', (req, res) => {
+  const task = tasks.find(t => t.id === req.params.id);
+  if (!task) {
+    return res.status(404).json({ error: 'Tarefa não encontrada' });
+  }
+
+  const { status } = req.body;
+  if (!status || !VALID_STATUSES.includes(status)) {
+    return res.status(400).json({
+      error: `O campo "status" é obrigatório e deve ser um dos seguintes: ${VALID_STATUSES.join(', ')}`
+    });
+  }
+
+  task.status = status;
+  task.updatedAt = new Date().toISOString();
+  res.json(task);
+});
 
 // Remover tarefa
 app.delete('/tasks/:id', (req, res) => {
@@ -122,6 +165,12 @@ app.delete('/tasks/:id', (req, res) => {
   res.json({ message: 'Tarefa removida com sucesso', task: removed });
 });
 
+// Rota não encontrada
+app.use((req, res) => {
+  res.status(404).json({ error: 'Rota não encontrada' });
+});
 
+// Utilitário usado pelos testes para resetar o estado em memória
+app.resetTasks = () => { tasks = initialTasks(); };
 
-module.exports = app
+module.exports = app;

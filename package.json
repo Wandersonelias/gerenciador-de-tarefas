@@ -5,13 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\"",
-    "dev" : "echo \"Servidor online\""
-
+    "dev": "echo \"Servidor online\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2"
   }
 }
