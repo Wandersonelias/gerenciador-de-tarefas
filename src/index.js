@@ -123,6 +123,5 @@ app.delete('/tasks/:id', (req, res) => {
 });
 
 
-app.listen(3000,()=>{
-    console.log("Servidor online!!")
-})
+
+module.exports = app
