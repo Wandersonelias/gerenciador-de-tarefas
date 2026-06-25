@@ -3,6 +3,23 @@ const { randomUUID } = require('crypto')
 const app = express()
 
 
+
+// Rota raiz com informações básicas da API
+app.get('/', (req, res) => {
+  res.json({
+    message: 'API de Gestão de Tarefas',
+    endpoints: {
+      'GET /tasks': 'Lista todas as tarefas (aceita ?status=pending|in_progress|done)',
+      'GET /tasks/:id': 'Busca uma tarefa pelo id',
+      'POST /tasks': 'Cria uma nova tarefa (title obrigatório, description opcional)',
+      'PUT /tasks/:id': 'Atualiza uma tarefa existente',
+      'PATCH /tasks/:id/status': 'Atualiza apenas o status da tarefa',
+      'DELETE /tasks/:id': 'Remove uma tarefa'
+    }
+  });
+});
+
+
 // "Banco de dados" em memória
 let tasks = [
   {
